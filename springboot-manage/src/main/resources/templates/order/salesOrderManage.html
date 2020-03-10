@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>后台信息管理系统</title>
+
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+
+    <link th:href="@{/css/plugins/iCheck/custom.css}" rel="stylesheet"/>
+    <link th:href="@{/css/plugins/footable/footable.core.css}" rel="stylesheet"/>
+
+
+    <!-- datetimepicker -->
+    <link th:href="@{/css/bootstrap-datetimepicker.css}" rel="stylesheet" media="screen"/>
+    <link th:href="@{/css/bootstrap-datetimepicker.min.css}" rel="stylesheet" media="screen"/>
+
+</head>
+
+<body>
+
+<div id="wrapper">
+    <nav class="navbar-default navbar-static-side" role="navigation" th:include="nav :: navigation"></nav>
+    <div id="page-wrapper" class="gray-bg">
+        <div class="border-bottom" th:include="header :: headerTop"></div>
+        <div class="row wrapper border-bottom white-bg page-heading" th:fragment="headerNav">
+            <div class="col-lg-10">
+                <h2>订单管理</h2>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="#">首页</a>
+                    </li>
+                    <li>
+                        <a>订单管理</a>
+                    </li>
+                    <li class="active">
+                        <strong>订单管理</strong>
+                    </li>
+                </ol>
+            </div>
+            <div class="col-lg-2">
+            </div>
+        </div>
+
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>搜索&amp;操作</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="display: block;">
+                            <form action="salesOrderManage_0_0_0">
+                                <div class="row">
+                                    <!--                                    <div class="col-sm-2 m-b-xs">-->
+                                    <!--                                        <select name="paymentType" id="paymentType" class="form-control">-->
+                                    <!--                                            <option value="0" th:selected="${order.paymentType==0}">&#45;&#45;请选择支付类型&#45;&#45;</option>-->
+                                    <!--                                            <option value="1" th:selected="${order.paymentType==1}">在线支付</option>-->
+                                    <!--                                            <option value="2" th:selected="${order.paymentType==2}">货到付款</option>-->
+                                    <!--                                        </select>-->
+                                    <!--                                    </div>-->
+                                    <div class="col-sm-2 m-b-xs">
+                                        <select name="ckcuStatus" id="ckcuStatus" class="form-control">
+                                            <option value="0" th:selected="${order.ckcuStatus==0}">未出库</option>
+                                            <option value="1" th:selected="${order.ckcuStatus==1}">已出库</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-2 m-b-xs">
+                                        <input id="minOrderTimeStr" name="minOrderTimeStr" class="form-control"
+                                               type="text" th:value="${order.minOrderTimeStr}" placeholder="订单最早时间"/>
+                                    </div>
+                                    <div class="col-sm-2 m-b-xs">
+
+                                        <input id="maxOrderTimeStr" name="maxOrderTimeStr" class="form-control"
+                                               type="text" th:value="${order.maxOrderTimeStr}" placeholder="订单最晚时间"/>
+                                    </div>
+                                    <div class="col-sm-2 m-b-xs">
+                                        <button class="btn btn-primary btn-block" type="submit"><i
+                                                class="fa fa-search"></i>&nbsp;&nbsp;&nbsp;&nbsp;<strong>搜索</strong>
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-2 m-b-xs">
+                                        <a th:href="@{'download2'}" class="btn btn-primary btn-block">&nbsp;&nbsp;&nbsp;&nbsp;<strong>导出</strong></a>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="row">
+                                <div class="col-sm-6 m-b-xs">
+
+                                </div>
+                                <div class="col-sm-6 m-b-xs">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5 th:if="${order.customerName} eq null">订单列表</h5>
+                            <h5 th:if="${order.customerName} ne null" th:text="${order.customerName}+'--订单列表'"></h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="table-responsive">
+                                <table class=" table table-hover" data-page-size="10">
+                                    <thead>
+                                    <tr>
+                                        <th width="10%">订单编号</th>
+                                        <th width="20%">出库单名</th>
+                                        <th width="8%">制单人</th>
+                                        <th width="8%">商品总金额</th>
+<!--                                        <th width="8%">状态</th>-->
+<!--                                        <th width="8%">支付方式</th>-->
+                                        <td width="15%">录单日期</td>
+                                        <th width="8%">出库状态</th>
+                                        <th>操作</th>
+                                        <th>出库</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="o : ${orderList}">
+                                        <td th:text="${o.orderNumber}">Onions</td>
+                                        <td th:text="${o.orderName}">Onions</td>
+                                        <td th:text="${o.madeBy}">Onions</td>
+                                        <td th:text="${o.amount}">Onions</td>
+<!--                                        <td th:text="${o.number}">Onions</td>-->
+<!--                                        <td th:text="${o.ckcuStatus==0?'否':'是'}">Onions</td>-->
+                                        <td th:text="${o.sellTimeStr}">Onions</td>
+                                        <td th:if="${o.ckcuStatus ==0}" style="color: red">未出库</td>
+                                        <td th:if="${o.ckcuStatus ==1}" style="color: green">已出库</td>
+                                        <td>
+                                            <a th:href="@{'tosaleForm?id='+${o.id}}" title="查看详情">查看详情</a>
+                                        </td>
+                                        <td th:if="${o.ckcuStatus == 0}">
+                                            <a th:href="@{'salesOrderCk?id='+${o.id}}" title="出库">出库</a>
+                                        </td>
+                                        <td th:if="${o.ckcuStatus == 1}">
+                                            已出库
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td colspan="9">
+                                            <ul id="pageHTML" class="pagination pull-right"></ul>
+                                        </td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer" th:include="footer :: copyright"></div>
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script th:src="@{/js/jquery-2.1.1.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+<script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+
+<!-- Peity -->
+<script th:src="@{/js/plugins/peity/jquery.peity.min.js}"></script>
+
+<!-- Custom and plugin javascript -->
+<script th:src="@{/js/inspinia.js}"></script>
+<script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+
+<!-- iCheck -->
+<script th:src="@{/js/plugins/iCheck/icheck.min.js}"></script>
+
+<!-- Peity -->
+<script th:src="@{/js/demo/peity-demo.js}"></script>
+
+<!-- FooTable -->
+<script th:src="@{/js/plugins/footable/footable.all.min.js}"></script>
+
+<!-- common -->
+<script th:src="@{/js/common.js}"></script>
+
+
+<!-- datepicker -->
+<script th:src="@{/js/bootstrap.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/bootstrap-datetimepicker.js}"></script>
+<script th:src="@{/js/locales/bootstrap-datetimepicker.zh-CN.js}"></script>
+
+
+<script th:inline="javascript">
+    var pageHTML = [[${pageHTML}]];
+    $(document).ready(function () {
+        $("#pageHTML").html(pageHTML);
+    });
+    $("#minOrderTimeStr").datetimepicker({
+        format: "yyyy-mm-dd",
+        autoclose: true,
+        todayBtn: true,
+        todayHighlight: true,
+        showMeridian: true,
+        pickerPosition: "bottom-left",
+        language: 'zh-CN',//中文，需要引用zh-CN.js包
+        startView: 2,//月视图
+        minView: 2//日期时间选择器所能够提供的最精确的时间选择视图
+    });
+
+    $("#maxOrderTimeStr").datetimepicker({
+        format: "yyyy-mm-dd",
+        autoclose: true,
+        todayBtn: true,
+        todayHighlight: true,
+        showMeridian: true,
+        pickerPosition: "bottom-left",
+        language: 'zh-CN',//中文，需要引用zh-CN.js包
+        startView: 2,//月视图
+        minView: 2//日期时间选择器所能够提供的最精确的时间选择视图
+    });
+</script>
+
+</body>
+
+</html>

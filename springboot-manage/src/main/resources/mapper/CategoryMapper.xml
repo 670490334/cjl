@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jesper.mapper.CategoryMapper">
+    <resultMap id="BaseResultMap" type="com.jesper.hftc.entity.Category">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.jesper.hftc.entity.Category">
+        insert into category (name)
+        values (#{name})
+    </insert>
+
+    <update id="delete" parameterType="integer">
+        update category
+        set isdelete = 1
+        where id = #{id}
+    </update>
+
+    <select id="categoryList" resultMap="BaseResultMap">
+        select *
+        FROM category
+        where isdelete = 0;
+
+    </select>
+
+    <select id="getById" resultMap="BaseResultMap" parameterType="Integer">
+        select *
+        FROM categoty
+        where id = #{id}
+          and isdelete = 0;
+    </select>
+
+    <update id="update" parameterType="com.jesper.hftc.entity.Category">
+        update category
+        set name = #{name}
+        where id = #{id}
+    </update>
+
+</mapper>

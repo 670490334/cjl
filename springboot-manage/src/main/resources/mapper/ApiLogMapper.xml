@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jesper.mapper.ApiLogMapper">
+    <resultMap id="BaseResultMap" type="com.jesper.hftc.entity.ApiLog">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="method_name" property="methodName" jdbcType="VARCHAR"/>
+        <result column="success" property="success" jdbcType="VARCHAR"/>
+        <result column="params" property="params" jdbcType="VARCHAR"/>
+        <result column="msg" property="msg" jdbcType="VARCHAR"/>
+    </resultMap>
+    <insert id="save" parameterType="com.jesper.hftc.entity.ApiLog" useGeneratedKeys="true" keyProperty="id">
+        insert into apilog(id, create_time, method_name, success, params, msg)
+        values (#{id, jdbcType=INTEGER}, #{createTime}, #{methodName}, #{success}, #{params}, #{msg})
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>后台信息管理系统</title>
+
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet"/>
+
+    <!-- Toastr style -->
+    <link th:href="@{/css/plugins/toastr/toastr.min.css}" rel="stylesheet"/>
+
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+
+    <!-- summernote style -->
+    <link th:href="@{/css/plugins/summernote/summernote.css}" rel="stylesheet"/>
+    <link th:href="@{/css/plugins/summernote/summernote-bs3.css}" rel="stylesheet"/>
+
+</head>
+
+<body>
+
+<div id="wrapper">
+    <nav class="navbar-default navbar-static-side" role="navigation" th:include="nav :: navigation"></nav>
+    <div id="page-wrapper" class="gray-bg">
+        <div class="border-bottom" th:include="header :: headerTop"></div>
+        <div class="row wrapper border-bottom white-bg page-heading" th:fragment="headerNav">
+            <div class="col-lg-10">
+                <h2>商品管理</h2>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="#">首页</a>
+                    </li>
+                    <li>
+                        <a>订单管理</a>
+                    </li>
+                    <li>
+                        <a>订单出库</a>
+                    </li>
+                    <li class="active">
+                        <strong>出库</strong>
+                    </li>
+                </ol>
+            </div>
+            <div class="col-lg-2">
+            </div>
+        </div>
+
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>出库-入库-报损</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div th:each="s: ${salesOrderChildList}">
+                            <div class="row">
+                                <div class="col-sm-2 m-b-xs">
+                                    <select name="warehouseId" id="warehouseId"
+                                            class="form-control">
+                                        <option value="0">--请选择仓库--</option>
+                                        <option th:each="ic : ${s.warehousemanageList}" th:value="${ic.id}"
+                                                th:text="${ic.wareName}"
+                                                th:selected="${s.productId==ic.productId}">分类
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2 m-b-xs">
+                                    <label class="" th:text="${s.productName + '  待出库：'}"></label>
+                                </div>
+                                <div class="col-sm-2 m-b-xs">
+
+                                    <span id="notCkNumber" th:value="${s.number - s.ckNumber}"
+                                          th:text="${s.number - s.ckNumber}"></span>
+                                </div>
+                                <div class="col-sm-2 m-b-xs">
+                                    <input id="baseNumber" name="baseNumber" class="form-control" type="text"
+                                           placeholder="数量"/>
+                                </div>
+                                <div class="col-sm-2 m-b-xs">
+                                    <button class="btn btn-primary btn-block"
+                                            th:onclick="'javascript:sale('+${s.productId}+',2,0);'"><i
+                                            class="fa fa-search"></i>&nbsp;&nbsp;&nbsp;&nbsp;<strong>出库</strong>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="footer" th:include="footer :: copyright"></div>
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script th:src="@{/js/jquery-2.1.1.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+<script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+
+<!-- Peity -->
+<script th:src="@{/js/plugins/peity/jquery.peity.min.js}"></script>
+
+<!-- Custom and plugin javascript -->
+<script th:src="@{/js/inspinia.js}"></script>
+<script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+
+<!-- Toastr script -->
+<script th:src="@{/js/plugins/toastr/toastr.min.js}"></script>
+
+<!-- common -->
+<script th:src="@{/js/common.js}"></script>
+
+<!-- SUMMERNOTE -->
+<script th:src="@{/js/plugins/summernote/summernote.min.js}"></script>
+
+
+<!--<script th:inline="javascript">-->
+<!--    var image = [[${item.image}]];-->
+<!--    $(document).ready(function () {-->
+<!--        if (image == null || image == "") {-->
+<!--            $("#imageCell").hide();-->
+<!--            $("#imputCell").show();-->
+<!--        } else {-->
+<!--            $("#imageCell").show();-->
+<!--            $("#imputCell").hide();-->
+<!--        }-->
+<!--        $("#imageCellBut").click(function () {-->
+<!--            $("#imageCell").hide();-->
+<!--            $("#imputCell").show();-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+<script th:inline="javascript">
+    $(document).ready(function () {
+        //初始化编辑器
+        $('#summernote').summernote({
+            height: 300,
+            codemirror: {
+                mode: 'text/html',
+                htmlMode: true,
+                lineNumbers: true,
+                theme: 'monokai'
+            }
+        });
+
+        //编辑器赋值
+        function ckProPrice() {
+            //判断商品价格
+            var reg = /(^[-+]?[1-9]\d*(\.\d{1,2})?$)|(^[-+]?[0]{1}(\.\d{1,2})?$)/;
+            if ($("#price").val() == "") {
+                toastr.error("商品价格不能为空", '提示');
+                return false;
+            } else {
+                if (!reg.test($("#price").val())) {
+                    toastr.error("单价必须为合法数字(正数，最多两位小数)！", '提示');
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+
+        //提交
+        $("#submitButton").click(function () {
+            if ($("#productName").val() == "") {
+                toastr.error('请输入商品标题', '提示');
+                return;
+            }
+            if ($("#productCategoryName").val() == "") {
+                toastr.error('请选择商品分类', '提示');
+                return;
+            }
+            if (!ckProPrice()) {
+                return;
+            }
+            if ($("#productNumber").val() == "") {
+                toastr.error('请输入商品编号', '提示');
+                return;
+            }
+            if ($("#specifications").val() == "") {
+                toastr.error('请输入规格型号', '提示');
+                return;
+            }
+            if ($("#color").val() == "") {
+                toastr.error('请输入色号', '提示');
+                return;
+            }
+            $("#formTag").submit();
+        });
+    });
+
+    function checkRate(nubmer) {
+        //判断正整数/[1−9]+[0−9]∗]∗/
+        var re = /^[0-9]+.?[0-9]*/;//
+        if (!re.test(nubmer)) {
+            return false;
+        }
+        return true;
+    }
+
+    /*<![CDATA[*/
+    function sale(id, state, commendState) {
+        var deleteTag;
+        var notCkNumber = $("#notCkNumber").text()
+        if (state == 2) {
+            deleteTag = confirm("确定出库?");
+        } else {
+            deleteTag = false;
+        }
+        if (!deleteTag) {
+            return;
+        }
+        var warehouseId = $("#warehouseId").val();
+        if (warehouseId == 0) {
+            toastr.error('请选择仓库', '提示');
+            return;
+        }
+        //todo
+        var saleNumber = $("#baseNumber").val();
+        if (!checkRate(saleNumber)) {
+            toastr.error('请输入正整数', '提示');
+            return;
+        }
+        console.log('notNUmber:' + notCkNumber + ";saleNumebr:" + saleNumber)
+        if (saleNumber > notCkNumber) {
+            toastr.error('出库数大于未出库数', '提示');
+            return;
+        }
+        if (deleteTag) {
+            $.ajax({
+                type: "POST",
+                url: "ckSaleOrder?id=" + id + "&warehouseId=" + warehouseId + "&saleNumber=" + saleNumber,
+                contentType: "application/json; charset=utf-8",
+                success: function (msg) {
+                    if (msg.data.code == 200) {
+                        alert("操作成功");
+                        window.location.reload();
+                    } else {
+                        alert(msg.data.msg);
+                    }
+                },
+                error: function () {
+                    alert("系统异常！");
+                }
+            });
+        }
+    }
+
+    /*]]>*/
+
+</script>
+
+</body>
+
+</html>

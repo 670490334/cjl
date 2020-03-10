@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="utf-8"/>
+    <title>出库单</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <!--    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css"/>-->
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/jquery-2.1.1.js}"></script>
+<!--    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>-->
+    <!--    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+
+</head>
+
+<body>
+
+<div class="container">
+    <h3 class="text-center" th:text="${salesOrder.orderName}">恒丰陶瓷1出库单</h3>
+    <div>
+        <span style="position: fixed ! important; top: 50px;">录单日期： <span th:text="${salesOrder.sellTimeStr}"></span></span>
+        <span style="position: fixed ! important;left: 300px; top: 50px;">编号：<span th:text="${salesOrder.orderNumber}">XS-20201120-005</span></span>
+        <span style="position: fixed ! important;left: 550px; top: 50px;">购买单位：<span
+                th:text="${salesOrder.customerName}">七天 欧朋</span></span>
+    </div>
+    <div><span style="position: fixed ! important; top: 70px;">经手人：<span
+            th:text="${salesOrder.passBy}">陈俊龙</span></span></div>
+    <span style="position: fixed ! important;left: 300px; top: 70px;">摘要：<span th:text="${salesOrder.zy}">XS-20201120-005</span></span>
+    <div style="padding-top: 35px">
+        <table class="table table-bordered table-sm">
+            <!--<caption>边框表格布局</caption>-->
+            <thead>
+            <tr>
+                <th width="10%" height="20">商品名称</th>
+                <th width="10%">商品编号</th>
+                <th width="8%">规格</th>
+                <th width="5%">色号</th>
+                <th width="5%">单位</th>
+                <th width="7%">数量</th>
+                <th width="7%">单价</th>
+                <th width="7%">金额</th>
+                <th width="8%">件数</th>
+                <th width="7%">备注</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="child:${salesOrder.childList}">
+                <td th:text="${child.product.productName}">Tanmay</td>
+                <td th:text="${child.product.productNumber}">Bangalore</td>
+                <td th:text="${child.product.specifications}">560001</td>
+                <td th:text="${child.product.color}">560001</td>
+                <td th:text="${child.product.unit}">560001</td>
+                <td th:text="${child.number}">560001</td>
+                <td th:text="${child.product.price}">560001</td>
+                <td th:text="${child.amount}">560001</td>
+                <td th:text="${child.jianshu}">560001</td>
+                <td th:text="${child.remark}">560001</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <span>制单人: <span th:text="${salesOrder.madeBy}">廖凡</span></span>
+        <span style="padding-left: 200px">合计金额:<span th:text="${salesOrder.amount}">  50000</span></span>
+    </div>
+    <div>
+        敬告客户：<span th:text="${salesOrder.jgkh}">1.阿萨德来看哈市了肯定会看谁打谁了健康</span>
+    </div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>恒丰陶瓷进销存系统</title>
+
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+
+    <link th:href="@{/css/plugins/iCheck/custom.css}" rel="stylesheet"/>
+    <link th:href="@{/css/plugins/footable/footable.core.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<div id="wrapper">
+    <nav class="navbar-default navbar-static-side" role="navigation" th:include="nav :: navigation"></nav>
+    <div id="page-wrapper" class="gray-bg">
+        <div class="border-bottom" th:include="header :: headerTop"></div>
+        <div class="row wrapper border-bottom white-bg page-heading" th:fragment="headerNav">
+            <div class="col-lg-10">
+                <h2>商品管理</h2>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="#">首页</a>
+                    </li>
+                    <li>
+                        <a>商品管理</a>
+                    </li>
+                    <li class="active">
+                        <strong>商品管理</strong>
+                    </li>
+                </ol>
+            </div>
+            <div class="col-lg-2">
+            </div>
+        </div>
+
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>搜索&amp;操作</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="display: block;">
+                            <form action="productManage_0_0_0">
+                                <div class="row">
+                                    <div class="col-sm-2 m-b-xs">
+                                        <input id="title" name="productName" placeholder="商品名称" class="form-control"
+                                               type="text" th:value="${product.productName}"/>
+                                    </div>
+                                    <div class="col-sm-2 m-b-xs">
+                                        <select id="productCategoryName" name="productCategoryName"
+                                                class="form-control">
+                                            <option value="0" th:selected="${product.productCategoryName==''}">
+                                                --请选择商品类别--
+                                            </option>
+                                            <option th:each="ic : ${categoryList}" th:value="${ic.name}"
+                                                    th:text="${ic.name}"
+                                                    th:selected="${ic.name==product.productCategoryName}">分类
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-2 m-b-xs">
+                                        <input id="minPrice" name="minPrice" class="form-control" type="text"
+                                               placeholder="最低价格"/>
+                                    </div>
+                                    <div class="col-sm-2 m-b-xs">
+                                        <input id="maxPrice" name="maxPrice" class="form-control" type="text"
+                                               placeholder="最高价格"/>
+                                    </div>
+                                    <div class="col-sm-2 m-b-xs">
+                                        <button class="btn btn-primary btn-block" type="submit"><i
+                                                class="fa fa-search"></i>&nbsp;&nbsp;&nbsp;&nbsp;<strong>搜索</strong>
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-2 m-b-xs">
+                                        <a th:href="@{'download1'}" class="btn btn-primary btn-block">&nbsp;&nbsp;&nbsp;&nbsp;<strong>导出</strong></a>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="row">
+                                <div class="col-sm-6 m-b-xs">
+                                    <a th:href="@{productAdd}" class="btn btn-primary btn-sm" data-toggle="tooltip"
+                                       data-placement="left" title="" data-original-title="Refresh inbox"><i
+                                            class="fa fa-plus"></i>&nbsp;&nbsp;&nbsp;&nbsp;新增商品&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                </div>
+                                <div class="col-sm-6 m-b-xs">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>商品列表</h5>
+                            <br/>
+                            <div>
+                                <button type="button" onclick="javascript:saleProduct()" class="btn btn-success">商品出库
+                                </button>
+                                <!--                            <button type="button" onclick="javascript:saleForm()" class="btn btn-success">生成出库单</button>-->
+                                <a th:href="@{saleForm}" class="btn btn-primary btn-sm" data-toggle="tooltip"
+                                   data-placement="left" title="" data-original-title="Refresh inbox"><i
+                                        class="fa fa-plus"></i>&nbsp;&nbsp;&nbsp;&nbsp;生成出库单&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                <span>已选商品id：</span><span id="chosenIds" th:text="${ids}"></span>
+                            </div>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="table-responsive">
+                                <table id="myproductlist" class=" table table-hover" data-page-size="10">
+                                    <thead>
+                                    <tr>
+                                        <th width="5%">ID</th>
+                                        <th width="15%">商品标题</th>
+                                        <th width="8%">分类</th>
+                                        <th width="8%">价格</th>
+                                        <th width="8%">单位</th>
+                                        <th width="15%">色号</th>
+                                        <th width="15%">规格型号</th>
+                                        <!--<th width="10%">推荐状态</th>-->
+                                        <th>编辑</th>
+                                        <th>采购</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="product : ${productList}">
+                                        <td>
+                                            <input type="checkbox" th:value="${product.id}"/>
+                                            <label th:text="${product.id}"></label>
+
+                                        </td>
+                                        <td th:text="${product.productName}">Onions</td>
+                                        <td th:text="${product.productCategoryName}">Onions</td>
+                                        <td th:text="${product.price}">Onions</td>
+                                        <td th:text="${product.unit}">Onions</td>
+                                        <td th:text="${product.color}">Onions</td>
+                                        <td th:text="${product.specifications}">Onions</td>
+
+                                        <td>
+                                            <a th:href="@{'productEdit?id='+${product.id}}" title="修改"><i
+                                                    class="fa fa-edit text-navy"></i></a>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <a href="#" th:onclick="'javascript:updateState('+${product.id}+',2,0);'"
+                                               title="删除"><i class="fa fa-trash-o text-navy"></i></a>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{'purchaseOrderAdd?productId='+${product.id}}" title="采购">
+                                                <button class="btn-primary">采购</button>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td colspan="8">
+                                            <ul id="pageHTML" class="pagination pull-right"></ul>
+                                        </td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer" th:include="footer :: copyright"></div>
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script th:src="@{/js/jquery-2.1.1.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+<script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+
+<!-- Peity -->
+<script th:src="@{/js/plugins/peity/jquery.peity.min.js}"></script>
+
+<!-- Custom and plugin javascript -->
+<script th:src="@{/js/inspinia.js}"></script>
+<script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+
+<!-- iCheck -->
+<script th:src="@{/js/plugins/iCheck/icheck.min.js}"></script>
+
+<!-- Peity -->
+<script th:src="@{/js/demo/peity-demo.js}"></script>
+
+<!-- FooTable -->
+<script th:src="@{/js/plugins/footable/footable.all.min.js}"></script>
+
+<!-- common -->
+<script th:src="@{/js/common.js}"></script>
+
+<script th:inline="javascript">
+    var pageHTML = [[${pageHTML}]];
+    $(document).ready(function () {
+        $("#pageHTML").html(pageHTML);
+    });
+
+    /*<![CDATA[*/
+    function saleProduct() {
+        var ids = document.getElementsByTagName("input");
+        var ids2 = "";
+        for (var i = 0; i < ids.length; i++) {
+            if (ids[i].type == "checkbox") {
+                if (ids[i].checked) {
+                    ids2 += ids[i].value + ',';
+                }
+            }
+        }
+        alert(ids2.substring(0, ids2.length - 1));
+
+        if (ids2.length - 1 > 0) {
+            var data = {'ids': ids2};
+            var param = JSON.stringify(data);
+            $.ajax({
+                type: "POST",
+                url: "saleProduct",
+                data: param,
+                contentType: "application/json; charset=utf-8",
+                success: function (msg) {
+                    if (msg.code == 200) {
+                        alert('添加出库商品成功，如需继续添加请继续选择商品出库')
+                        //window.location.reload();
+                        //window.location.reload();
+                        $("#chosenIds").text(msg.data);
+                    } else {
+                        alert("添加出库商品失败：" + msg.message);
+                    }
+
+                },
+                error: function () {
+                    alert("系统异常！出库失败，请检查redis是否启动");
+                }
+            });
+        } else {
+            alert("请选择至少一个商品进行出库");
+        }
+    }
+
+    function saleForm() {
+        $.ajax({
+            type: "POST",
+            url: "saleForm",
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                if (msg.code == 200) {
+                    alert('添加出库商品成功，如需继续添加请继续选择商品出库')
+                    //window.location.reload();
+                    //window.location.reload();
+
+                } else {
+                    alert("添加出库商品失败：" + msg.message);
+                }
+
+            },
+            error: function () {
+                alert("系统异常！出库失败，请检查redis是否启动");
+            }
+        });
+    }
+
+    /*]]>*/
+    /*<![CDATA[*/
+    function updateState(id, state, commendState) {
+        var deleteTag;
+        if (state == 2) {
+            deleteTag = confirm("确定删除此条信息?");
+        } else {
+            deleteTag = true;
+        }
+        if (deleteTag) {
+            $.ajax({
+                type: "POST",
+                url: "productDelete?id=" + id,
+                contentType: "application/json; charset=utf-8",
+                success: function (msg) {
+                    alert('删除成功')
+                    window.location.reload();
+                },
+                error: function () {
+                    alert("系统异常！");
+                }
+            });
+        }
+    }
+
+    /*]]>*/
+</script>
+
+</body>
+
+</html>

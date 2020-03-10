@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jesper.mapper.SalesOrderChildMapper">
+    <resultMap id="BaseResultMap" type="com.jesper.hftc.entity.SalesOrderChild">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="product_id" property="productId" jdbcType="INTEGER"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="number" property="number" jdbcType="INTEGER"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="jianshu" property="jianshu" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="INTEGER"/>
+        <result column="ck_status" property="ckStatus" jdbcType="INTEGER"/>
+        <result column="ck_number" property="ckNumber" jdbcType="INTEGER"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMaps" type="com.jesper.hftc.entity.SalesOrderChild">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="product_id" property="productId" jdbcType="INTEGER"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="number" property="number" jdbcType="INTEGER"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="jianshu" property="jianshu" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="INTEGER"/>
+        <result column="ck_status" property="ckStatus" jdbcType="INTEGER"/>
+        <result column="ck_number" property="ckNumber" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <insert id="save" parameterType="java.util.List">
+        insert into sales_order_child(product_id, parent_id, number, amount, jianshu, remark) values
+        <foreach collection="list" item="salesOrderChild" index="index" open="" close=";" separator=",">
+            (#{salesOrderChild.productId}, #{salesOrderChild.parentId}, #{salesOrderChild.number},
+            #{salesOrderChild.amount}, #{salesOrderChild.jianshu}, #{salesOrderChild.remark})
+        </foreach>
+    </insert>
+
+    <select id="getByParentId" resultMap="BaseResultMap" parameterType="string">
+        select c.*,p.product_name
+        from sales_order_child c
+         left join product p on c.product_id = p.id
+        where c.parent_id = #{parentId};
+    </select>
+
+    <select id="getById" resultMap="BaseResultMaps" parameterType="integer">
+        select * from sales_order_child where id = #{id}
+    </select>
+    <update id="ck" parameterType="com.jesper.hftc.entity.SalesOrderChild">
+        update sales_order_child set ck_number = #{ckNumber},ck_status =#{ckStatus} where id = #{id}
+    </update>
+</mapper>

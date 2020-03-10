@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jesper.mapper.WarehouseMapper">
+    <resultMap id="BaseResultMap" type="com.jesper.hftc.entity.Warehouse">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="product_id" property="productId" jdbcType="VARCHAR"/>
+        <result column="number" property="number" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="VARCHAR"/>
+        <result column="total_money" property="totalMoney" jdbcType="VARCHAR"/>
+        <result column="product_id" property="productId" jdbcType="VARCHAR"/>
+        <result column="product_number" property="productNumber" jdbcType="VARCHAR"/>
+        <result column="product_specifications" property="productSpecifications" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="unit" property="unit" jdbcType="VARCHAR"/>
+        <result column="loss_number" property="lossNumber" jdbcType="VARCHAR"/>
+        <result column="update_number" property="updateNumber" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <update id="instorage" parameterType="com.jesper.hftc.entity.Warehouse">
+       update warehouse w set w.number = #{number} where id = #{id}
+    </update>
+
+<!--    <update id="delete" parameterType="integer">-->
+<!--        update warehousemanage-->
+<!--        set isdelete = 1-->
+<!--        where id = #{id}-->
+<!--    </update>-->
+
+    <select id="getList" resultMap="BaseResultMap" parameterType="com.jesper.hftc.entity.Warehouse">
+        select *
+        FROM warehouse
+        where isdelete = 0
+        order by create_time desc
+        limit #{start},#{end}
+    </select>
+
+    <select id="getById" resultMap="BaseResultMap" parameterType="Integer">
+        select *
+        FROM warehouse
+        where id = #{id}
+          and isdelete = 0;
+    </select>
+
+    <update id="update" parameterType="com.jesper.hftc.entity.Category">
+        update warehouse
+        set name = #{name}
+        where id = #{id}
+    </update>
+
+    <select id="count" resultType="integer">
+        select count(*) from warehouse;
+    </select>
+</mapper>

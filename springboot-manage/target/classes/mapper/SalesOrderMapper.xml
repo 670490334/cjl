@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jesper.mapper.SalesOrderMapper">
+    <resultMap id="BaseResultMap" type="com.jesper.hftc.entity.SalesOrder">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="order_name" property="orderName" jdbcType="VARCHAR"/>
+        <result column="order_number" property="orderNumber" jdbcType="VARCHAR"/>
+        <result column="customer_name" property="customerName" jdbcType="VARCHAR"/>
+        <result column="customer_id" property="customerId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="sell_time" property="sellTime" jdbcType="TIMESTAMP"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="product_number" property="productNumber" jdbcType="VARCHAR"/>
+        <result column="product_id" property="productId" jdbcType="INTEGER"/>
+        <result column="number" property="number" jdbcType="INTEGER"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="style" property="style" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="sales_return_number" property="salesReturnNumber" jdbcType="INTEGER"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="made_by" property="madeBy" jdbcType="VARCHAR"/>
+        <result column="pass_by" property="passBy" jdbcType="VARCHAR"/>
+        <result column="jgkh" property="jgkh" jdbcType="VARCHAR"/>
+        <result column="zy" property="zy" jdbcType="VARCHAR"/>
+        <result column="ckcu_status" property="ckcuStatus" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getOrdersByCustomerId" resultMap="BaseResultMap" parameterType="com.jesper.hftc.entity.SalesOrder">
+        select *
+        from sales_order
+        where customer_id = #{customerId}
+        <if test="minOrderTime != null and maxOrderTime != null">
+            AND sell_time BETWEEN #{minOrderTime, jdbcType=TIMESTAMP} AND #{maxOrderTime, jdbcType=TIMESTAMP}
+        </if>
+        <if test=" ckcuStatus != null">
+            and ckcu_status = #{ckcuStatus}
+        </if>
+        order by sell_time desc
+        limit #{start},#{end};
+    </select>
+    <select id="count" parameterType="com.jesper.hftc.entity.SalesOrder" resultType="integer">
+        select count(*) from sales_order where is_delete=0
+        <if test="customerId != null">
+            and customer_id = #{customerId}
+        </if>
+        <if test="minOrderTime != null and maxOrderTime != null">
+            AND sell_time BETWEEN #{minOrderTime, jdbcType=TIMESTAMP} AND #{maxOrderTime, jdbcType=TIMESTAMP}
+        </if>
+        <if test=" ckcuStatus != null">
+            and ckcu_status = #{ckcuStatus}
+        </if>
+
+    </select>
+
+    <select id="getList" resultMap="BaseResultMap" parameterType="com.jesper.hftc.entity.SalesOrder">
+        select *
+        from sales_order
+        where is_delete = 0
+        <if test="orderName != null">
+            AND order_name LIKE concat('%', #{orderName, jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="minOrderTime != null and maxOrderTime != null">
+            AND sell_time BETWEEN #{minOrderTime, jdbcType=TIMESTAMP} AND #{maxOrderTime, jdbcType=TIMESTAMP}
+        </if>
+        <if test="ckcuStatus != null">
+            and ckcu_status = #{ckcuStatus}
+        </if>
+        order by sell_time desc
+        limit #{start},#{end};
+    </select>
+
+    <insert id="save" parameterType="com.jesper.hftc.entity.SalesOrder">
+        insert into sales_order(id,order_name, order_number, customer_id,customer_name, create_time, sell_time, amount, made_by,
+                                pass_by,zy,jgkh)
+        values (#{id},#{orderName}, #{orderNumber},#{customerId} , #{customerName}, #{createTime}, #{sellTime}, #{amount}, #{madeBy},
+                #{passBy},#{zy},#{jgkh})
+    </insert>
+
+    <select id="getById" resultMap="BaseResultMap" parameterType="string">
+        select * from sales_order where id = #{id}
+    </select>
+
+    <update id="updateCkStatus" parameterType="string">
+        update sales_order set ckcu_status = 1 where id = #{id}
+    </update>
+</mapper>

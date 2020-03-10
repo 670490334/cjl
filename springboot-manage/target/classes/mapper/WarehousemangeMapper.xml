@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jesper.mapper.WarehousemangeMapper">
+    <resultMap id="BaseResultMap" type="com.jesper.hftc.entity.Warehousemanage">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="product_id" property="productId" jdbcType="VARCHAR"/>
+        <result column="warename" property="wareName" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="loss_number" property="lossNumber" jdbcType="VARCHAR"/>
+        <result column="sale_number" property="saleNumber" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.jesper.hftc.entity.Warehousemanage">
+        insert into warehousemanage(warename, address, create_time, update_time)
+        values (#{wareName}, #{address}, #{createTime}, #{updateTime})
+
+    </insert>
+
+    <update id="edit" parameterType="com.jesper.hftc.entity.Warehousemanage">
+        update warehousemanage w
+        set w.warename    = #{wareName},
+            w.address     = #{address},
+            w.update_time = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <update id="loss" parameterType="com.jesper.hftc.entity.Warehousemanage">
+        update warehousemanage w
+        set w.loss_number = #{lossNumber},
+            w.number      = #{number},
+            w.update_time = #{updateTime}
+        where id = #{id}
+    </update>
+    <update id="sale" parameterType="com.jesper.hftc.entity.Warehousemanage">
+        update warehousemanage w
+        set w.sale_number = #{saleNumber},
+            w.number      = #{number},
+            w.update_time = #{updateTime}
+        where id = #{id}
+    </update>
+    <update id="inStorage" parameterType="com.jesper.hftc.entity.Warehousemanage">
+        update warehousemanage w
+        set w.number      = #{number},
+            w.update_time = #{updateTime}
+        where id = #{id}
+    </update>
+
+
+    <select id="getList" resultMap="BaseResultMap" >
+        select *
+        FROM warehousemanage
+        where is_delete = 0
+        <if test="wareName != null ">
+            AND warename LIKE concat('%', #{wareName}, '%')
+        </if>
+        order by create_time desc
+        limit #{start},#{end}
+    </select>
+
+    <select id="getById" resultMap="BaseResultMap" parameterType="Integer">
+        select *
+        FROM warehousemanage
+        where id = #{id}
+    </select>
+
+    <select id="getListByProductId" resultMap="BaseResultMap" parameterType="Integer">
+        select *
+        from warehousemanage
+        where product_id = #{productId}
+          and is_delete = 0;
+    </select>
+
+    <select id="getInwarehousemanageList" resultMap="BaseResultMap">
+        select *
+        from warehousemanage
+        where product_id in (0, #{id})
+          and is_delete = 0;
+    </select>
+
+    <select id="count" resultType="integer">
+        select count(*)
+        from warehousemanage
+        where is_delete = 0;
+    </select>
+
+    <update id="addProduct" parameterType="integer">
+        update warehousemanage set product_id = #{productId} where id = #{id}
+    </update>
+</mapper>
